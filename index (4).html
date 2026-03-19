@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080808">
+<title>Ed Point — Perfect Hair</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C8A84B;--gold2:#F0D078;--gold3:#E6BC5C;--golddim:rgba(200,168,75,.14);--goldglow:rgba(200,168,75,.25);
+  --dark:#080808;--dark2:#0D0D0D;--dark3:#131313;--card:#111;--card2:#171717;
+  --border:#1C1C1C;--border2:#242424;--border3:#2E2E2E;
+  --text:#F0F0F0;--text2:#A8A8A8;--muted:#2A2A2A;--muted2:#484848;--muted3:#686868;
+  --green:#3DA869;--greendim:rgba(61,168,105,.13);
+  --red:#C94444;--reddim:rgba(201,68,68,.13);
+  --orange:#C87832;--orangedim:rgba(200,120,50,.13);
+  --blue:#3A7FC4;--bluedim:rgba(58,127,196,.13);
+  --nav-h:64px;--safe-bottom:env(safe-area-inset-bottom,0px);
+  --r:14px;--r-sm:10px;--r-xs:7px;
+  --trans:.2s cubic-bezier(.4,0,.2,1);
+}
+
+/* ══ PRINT ══ */
+@media print{body{background:#fff !important;color:#000 !important}#print-report{display:block !important}#main-app{display:none !important}}
+#print-report{display:none;font-family:'Outfit',sans-serif;max-width:900px;margin:0 auto;padding:40px 32px;color:#111;background:#fff}
+.pr-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #111}
+.pr-brand{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:6px;color:#111}
+.pr-brand-sub{font-size:11px;color:#666;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.pr-meta{text-align:right;font-size:12px;color:#555;line-height:1.7}
+.pr-section{margin-bottom:28px}
+.pr-sec-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;color:#111;border-bottom:1px solid #ddd;padding-bottom:6px;margin-bottom:14px}
+.pr-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.pr-stat{background:#f8f8f8;border:1px solid #e5e5e5;border-radius:8px;padding:12px;text-align:center}
+.pr-stat-lbl{font-size:9px;color:#888;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px}
+.pr-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#111}
+.pr-table{width:100%;border-collapse:collapse;font-size:11px}
+.pr-table th{padding:7px 10px;text-align:left;background:#111;color:#fff;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.pr-table td{padding:7px 10px;border-bottom:1px solid #eee}
+.pr-table tr:last-child td{border-bottom:none}
+.pr-table tr:nth-child(even) td{background:#fafafa}
+.pr-badge{display:inline-flex;padding:1px 6px;border-radius:20px;font-size:9px;font-weight:700}
+.pr-pago{background:#d4f0e0;color:#1a7a45}.pr-fiado{background:#fde8e8;color:#c0392b}
+.pr-footer{margin-top:32px;padding-top:16px;border-top:1px solid #ddd;font-size:10px;color:#999;text-align:center}
+.pr-fiados-item{display:flex;justify-content:space-between;padding:8px 10px;border-bottom:1px solid #eee;font-size:12px}
+.pr-fiados-item:nth-child(even){background:#fafafa}
+.pr-fiados-nome{font-weight:700;color:#111}.pr-fiados-val{font-weight:700;color:#c0392b}
+
+/* ══ BASE ══ */
+html,body{height:100%;overflow:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--dark);color:var(--text);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ══ HEADER ══ */
+header{
+  background:linear-gradient(180deg,rgba(6,6,6,1) 0%,rgba(8,8,8,.97) 100%);
+  border-bottom:1px solid rgba(200,168,75,.18);
+  padding:0 14px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;z-index:100;
+  position:relative;
+}
+header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(200,168,75,.4),transparent)}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-logo{
+  width:40px;height:40px;
+  background:linear-gradient(145deg,#1E1800,#2E2200);
+  border:1px solid rgba(200,168,75,.4);
+  border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:21px;
+  box-shadow:0 0 18px rgba(200,168,75,.2),inset 0 1px 0 rgba(255,255,255,.06);
+  flex-shrink:0;position:relative;overflow:hidden;
+}
+.brand-logo::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent)}
+.brand-text{}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:23px;letter-spacing:5px;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.brand-sub{font-size:7px;color:var(--muted3);letter-spacing:3px;text-transform:uppercase;margin-top:0px}
+.hdr-right{display:flex;align-items:center;gap:6px}
+#hdr-date{font-size:9.5px;color:var(--muted3);font-weight:500;letter-spacing:.3px}
+.btn-hdr{background:transparent;border:1px solid var(--border2);color:var(--muted3);border-radius:var(--r-xs);padding:5px 10px;font-family:'Outfit',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all var(--trans);white-space:nowrap;letter-spacing:.3px}
+.btn-hdr:hover{border-color:var(--gold);color:var(--gold)}
+.btn-hdr:active{transform:scale(.94)}
+.db-status{display:flex;align-items:center;gap:4px;font-size:8.5px;color:var(--muted3);font-weight:600;letter-spacing:.5px}
+.db-dot{width:5px;height:5px;border-radius:50%;background:var(--muted2);transition:all var(--trans);flex-shrink:0}
+.db-dot.online{background:var(--green);box-shadow:0 0 5px var(--green);animation:pdot 2s infinite}
+.db-dot.offline{background:var(--orange)}.db-dot.error{background:var(--red)}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ══ PAGES ══ */
+#main-app{flex:1;overflow:hidden;position:relative}
+.page{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 12px)}
+.page.active{display:block}
+
+/* ══ BOTTOM NAV ══ */
+.bottom-nav{height:calc(var(--nav-h) + var(--safe-bottom));padding-bottom:var(--safe-bottom);background:rgba(6,6,6,.98);border-top:1px solid rgba(200,168,75,.15);display:flex;align-items:stretch;flex-shrink:0;z-index:200;position:relative}
+.bottom-nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(200,168,75,.3),transparent)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--muted2);-webkit-tap-highlight-color:transparent;padding:8px 4px;position:relative;transition:color var(--trans)}
+.nav-btn .nav-ico{font-size:21px;line-height:1;transition:transform .22s cubic-bezier(.34,1.56,.64,1)}
+.nav-btn .nav-lbl{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.nav-btn.active{color:var(--gold)}.nav-btn.active .nav-ico{transform:scale(1.22)}.nav-btn:active .nav-ico{transform:scale(.8)}
+.nav-badge{position:absolute;top:6px;right:calc(50% - 20px);background:var(--red);color:#fff;font-size:8px;font-weight:700;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px}
+
+/* DESKTOP TABS */
+.desktop-tabs{background:rgba(6,6,6,.98);border-bottom:1px solid rgba(200,168,75,.15);padding:0 24px;gap:2px;align-items:center;display:none}
+.dtab{background:none;border:none;color:var(--muted3);font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:600;padding:13px 16px;cursor:pointer;border-bottom:2px solid transparent;transition:all var(--trans);letter-spacing:.3px}
+.dtab.active{color:var(--gold);border-bottom-color:var(--gold)}.dtab:hover:not(.active){color:var(--text)}
+
+/* ══ CONTENT ══ */
+.content{padding:13px 13px}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:12.5px;letter-spacing:3px;color:var(--gold);margin-bottom:11px;display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* ══ VERSÍCULO ══ */
+.versiculo-card{
+  background:linear-gradient(135deg,#0C0900,#160E02);
+  border:1px solid rgba(200,168,75,.2);
+  border-radius:var(--r);padding:15px 17px;margin-bottom:13px;
+  position:relative;overflow:hidden;
+}
+.versiculo-card::before{content:'❝';position:absolute;top:-12px;left:8px;font-size:80px;color:rgba(200,168,75,.04);font-family:Georgia,serif;line-height:1;pointer-events:none;user-select:none}
+.versiculo-card::after{content:'';position:absolute;top:0;right:0;width:60px;height:100%;background:linear-gradient(90deg,transparent,rgba(200,168,75,.03));pointer-events:none}
+.v-label{font-size:7.5px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;font-weight:700;margin-bottom:7px;opacity:.65}
+.v-texto{font-size:13px;color:rgba(240,240,240,.78);line-height:1.68;font-style:italic;font-weight:400;margin-bottom:7px}
+.v-ref{font-size:10px;color:var(--gold);font-weight:700;letter-spacing:.5px;text-align:right}
+
+/* ══ STATS ══ */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 12px;position:relative;overflow:hidden;transition:transform var(--trans)}
+.stat:active{transform:scale(.97)}
+.stat-glow{position:absolute;top:-16px;right:-8px;width:55px;height:55px;border-radius:50%;opacity:.09;filter:blur(18px)}
+.stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 var(--r) var(--r)}
+.s-gold::after{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.s-green::after{background:var(--green)}.s-red::after{background:var(--red)}.s-blue::after{background:var(--blue)}.s-or::after{background:var(--orange)}
+.stat-lbl{font-size:7px;color:var(--muted3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:21px;line-height:1.1}
+.s-gold .stat-val{color:var(--gold)}.s-green .stat-val{color:var(--green)}.s-red .stat-val{color:var(--red)}.s-blue .stat-val{color:var(--blue)}.s-or .stat-val{color:var(--orange)}
+.stat-sub{font-size:8px;color:var(--muted3);margin-top:2px}
+
+/* ══ CARDS ══ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:11px}
+.card-h{padding:10px 14px;background:rgba(255,255,255,.016);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-t{font-family:'Bebas Neue',sans-serif;font-size:11.5px;letter-spacing:2px;color:var(--gold)}
+.card-b{padding:13px}
+.chart-wrap{position:relative;height:150px;width:100%}
+.chart-wrap-tall{position:relative;height:210px;width:100%}
+
+/* ══ SERVIÇOS GRID ══ */
+.servicos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:13px}
+.servico-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px 10px 13px;
+  cursor:pointer;transition:all var(--trans);
+  position:relative;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  text-align:center;user-select:none;
+}
+.servico-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--golddim),transparent);opacity:0;transition:opacity var(--trans)}
+.servico-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 var(--r) var(--r);background:var(--border2);transition:background var(--trans)}
+.servico-card:hover{border-color:rgba(200,168,75,.35);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.servico-card:hover::before{opacity:1}.servico-card:hover::after{background:var(--gold)}
+.servico-card:active{transform:scale(.94);opacity:.8}
+.servico-card.flash{animation:flashGreen .55s ease}
+@keyframes flashGreen{0%{box-shadow:0 0 0 0 rgba(61,168,105,.7);border-color:var(--green)}70%{box-shadow:0 0 0 16px rgba(61,168,105,0);border-color:var(--green)}100%{box-shadow:none;border-color:var(--border)}}
+.s-ico{font-size:28px;line-height:1}
+.s-nome{font-weight:700;font-size:12px;color:var(--text);letter-spacing:.2px;line-height:1.25}
+.s-preco{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px}
+.s-tap{background:rgba(200,168,75,.1);border:1px solid rgba(200,168,75,.18);color:var(--gold);border-radius:5px;padding:3px 10px;font-size:8.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:all var(--trans)}
+.servico-card:hover .s-tap{background:rgba(200,168,75,.22)}
+
+/* COMANDA TOP */
+.comanda-top-bar{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;margin-bottom:11px}
+.forma-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px}
+.forma-pill{flex:1;min-width:65px;padding:8px 5px;border-radius:8px;border:1.5px solid var(--border2);background:var(--dark3);color:var(--muted3);font-family:'Outfit',sans-serif;font-size:10.5px;font-weight:700;cursor:pointer;transition:all var(--trans);text-align:center;-webkit-tap-highlight-color:transparent}
+.forma-pill.ativa{border-color:var(--gold);background:var(--golddim);color:var(--gold)}
+.forma-pill:active{transform:scale(.92)}
+.barber-div{display:flex;align-items:center;gap:10px;margin:0 0 13px;opacity:.25}
+.barber-div::before,.barber-div::after{content:'';flex:1;height:1px;background:var(--border)}
+.barber-div span{font-size:14px}
+
+/* ══ FORMS ══ */
+.frow{display:grid;gap:9px;margin-bottom:9px}
+.f2{grid-template-columns:1fr 1fr}.f3{grid-template-columns:1fr 1fr 1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+label{font-size:7.5px;color:var(--muted3);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+input,select,textarea{background:var(--dark3);border:1px solid var(--border2);border-radius:var(--r-sm);padding:11px 12px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color var(--trans),box-shadow var(--trans);width:100%;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--golddim)}
+input::placeholder,textarea::placeholder{color:var(--muted2)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+select option{background:#131313}
+.pay-toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px}
+.pay-btn{padding:12px 8px;border-radius:var(--r-sm);border:2px solid var(--border2);background:var(--dark3);color:var(--muted3);font-family:'Outfit',sans-serif;font-size:11.5px;font-weight:700;cursor:pointer;transition:all var(--trans);text-align:center;-webkit-tap-highlight-color:transparent}
+.pay-btn:active{transform:scale(.95)}
+.pay-btn.sel-pago{border-color:var(--green);background:var(--greendim);color:var(--green)}
+.pay-btn.sel-fiado{border-color:var(--red);background:var(--reddim);color:var(--red)}
+
+/* ══ BUTTONS ══ */
+.btn-gold{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#080808;border:none;border-radius:var(--r-sm);padding:13px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;cursor:pointer;transition:all var(--trans);margin-top:5px;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 20px rgba(200,168,75,.25);position:relative;overflow:hidden}
+.btn-gold::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transition:left .4s}
+.btn-gold:hover::after{left:100%}
+.btn-gold:active{transform:scale(.97);opacity:.88}.btn-gold:disabled{opacity:.4;cursor:not-allowed}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--muted3);border-radius:var(--r-xs);padding:7px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all var(--trans);white-space:nowrap}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}.btn-outline:active{transform:scale(.94)}
+.btn-sm-gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#080808;border:none;border-radius:var(--r-xs);padding:7px 13px;font-size:11px;font-weight:700;cursor:pointer;transition:all var(--trans);white-space:nowrap}
+.btn-sm-gold:active{transform:scale(.94)}
+.btn-baixa{background:var(--green);color:#080808;border:none;border-radius:var(--r-xs);padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all var(--trans)}
+.btn-baixa:active{transform:scale(.94)}
+.btn-quitar{background:transparent;border:1px solid var(--green);color:var(--green);border-radius:var(--r-xs);padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all var(--trans)}
+.btn-quitar:hover{background:var(--greendim)}.btn-quitar:active{transform:scale(.94)}
+.btn-danger{background:transparent;border:1px solid var(--red);color:var(--red);border-radius:var(--r-xs);padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all var(--trans)}
+.btn-danger:hover{background:var(--reddim)}.btn-danger:active{transform:scale(.94)}
+.del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:13px;padding:4px 7px;border-radius:5px;min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;transition:all var(--trans)}
+.del:hover{color:var(--red);background:var(--reddim)}.del:active{transform:scale(.86)}
+.btn-icon{background:none;border:1px solid var(--border2);color:var(--muted3);border-radius:var(--r-xs);padding:6px 9px;font-size:12px;cursor:pointer;transition:all var(--trans)}
+.btn-icon:hover{border-color:var(--gold);color:var(--gold)}.btn-icon:active{transform:scale(.93)}
+
+/* ══ CATÁLOGO DE SERVIÇOS (GESTÃO) ══ */
+.catalogo-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);transition:background var(--trans)}
+.catalogo-item:hover{background:rgba(255,255,255,.02)}.catalogo-item:last-child{border-bottom:none}
+.cat-ico{font-size:22px;flex-shrink:0;width:32px;text-align:center}
+.cat-info{flex:1;min-width:0}
+.cat-nome{font-weight:600;font-size:13px}
+.cat-preco{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);letter-spacing:.5px}
+.cat-obs{font-size:10px;color:var(--muted3);margin-top:1px}
+.cat-actions{display:flex;gap:5px;flex-shrink:0}
+
+/* MODAL ADD/EDIT SERVIÇO */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
+.modal-backdrop.hidden{display:none}
+.modal-backdrop.center{align-items:center}
+.modal-sheet{background:var(--dark2);border:1px solid var(--border2);border-radius:var(--r) var(--r) 0 0;padding:20px;width:100%;max-width:480px;box-shadow:0 -20px 60px rgba(0,0,0,.8);max-height:90vh;overflow-y:auto}
+.modal-sheet.center-modal{border-radius:var(--r);margin:16px;max-height:85vh}
+.modal-drag{width:36px;height:3px;background:var(--border3);border-radius:2px;margin:0 auto 18px}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;color:var(--gold);margin-bottom:5px}
+.modal-sub{font-size:11px;color:var(--muted3);margin-bottom:18px;line-height:1.6}
+.modal-fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.modal-inp{background:var(--dark3);border:1px solid var(--border2);border-radius:var(--r-sm);padding:11px 12px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none;width:100%;transition:border-color var(--trans)}
+.modal-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--golddim)}
+.modal-inp::placeholder{color:var(--muted2);font-size:12px}
+.modal-actions{display:flex;gap:8px;margin-top:6px}
+.modal-hint{font-size:10px;color:var(--muted3);margin-top:12px;background:rgba(200,168,75,.05);border:1px solid rgba(200,168,75,.12);border-radius:8px;padding:9px 12px;line-height:1.6}
+.emoji-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px}
+.emoji-opt{background:var(--dark3);border:1px solid var(--border2);border-radius:7px;padding:7px;font-size:18px;cursor:pointer;text-align:center;transition:all var(--trans)}
+.emoji-opt:hover,.emoji-opt.sel{border-color:var(--gold);background:var(--golddim)}
+.emoji-opt:active{transform:scale(.88)}
+
+/* ══ FIADOS ══ */
+.alert-fiado{background:rgba(201,68,68,.07);border:1px solid rgba(201,68,68,.2);border-radius:var(--r);padding:11px 14px;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}
+.alert-fiado.hidden{display:none}
+.fc{background:var(--dark3);border:1px solid var(--border2);border-radius:var(--r);padding:13px;margin-bottom:9px}
+.fc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
+.fc-nome{font-weight:700;font-size:14px}.fc-valor{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--red)}
+.fc-item{display:flex;justify-content:space-between;font-size:11px;color:var(--muted3);background:rgba(255,255,255,.02);border-radius:5px;padding:5px 8px;margin-bottom:3px}
+.fc-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:9px}
+.fc-inp{flex:1;min-width:90px;padding:10px 12px;font-size:13px}
+
+/* ══ HIST ══ */
+.hist-item{padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.035);display:flex;align-items:center;gap:9px;transition:background var(--trans)}
+.hist-item:hover{background:rgba(255,255,255,.016)}.hist-item:last-child{border-bottom:none}
+.hi-left{flex:1;min-width:0}.hi-nome{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi-det{font-size:9.5px;color:var(--muted3);margin-top:2px}
+.hi-right{text-align:right;flex-shrink:0}.hi-val{font-weight:700;font-size:13px}
+.hi-val.pago{color:var(--green)}.hi-val.fiado{color:var(--red)}
+
+/* ══ BADGES ══ */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:8.5px;font-weight:700}
+.b-d{background:var(--golddim);color:var(--gold)}.b-pago{background:var(--greendim);color:var(--green)}.b-fiado{background:var(--reddim);color:var(--red)}
+
+/* ══ FILTERS ══ */
+.filters-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px;align-items:center}
+.filter-sel{padding:7px 9px;font-size:11px;min-width:78px;border-radius:8px}
+.filter-inp{padding:8px 11px;font-size:12px;border-radius:8px;flex:1;min-width:110px}
+.filter-inp::placeholder{color:var(--muted2)}
+
+/* ══ DIST ══ */
+.dist-row{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.dist-lbl{font-size:9.5px;color:var(--muted3);width:58px;flex-shrink:0}
+.dist-track{flex:1;background:var(--dark3);border-radius:20px;height:5px;overflow:hidden}
+.dist-fill{height:100%;border-radius:20px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.dist-val{font-size:9.5px;font-weight:700;width:68px;text-align:right;flex-shrink:0}
+
+/* ══ EMPTY ══ */
+.empty{text-align:center;padding:26px 18px;color:var(--muted3);font-size:12px}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 14px);left:50%;transform:translateX(-50%) translateY(24px);z-index:9999;background:rgba(15,15,15,.97);border:1px solid var(--border2);border-radius:var(--r);padding:11px 18px;font-size:12px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:9px;box-shadow:0 14px 44px rgba(0,0,0,.85);opacity:0;transition:all .32s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;max-width:calc(100vw - 28px)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ══ DESKTOP ══ */
+@media(min-width:700px){
+  html,body{height:auto;overflow:auto}
+  #main-app{overflow:visible;position:relative}
+  .page{position:static;overflow:visible;display:none;padding-bottom:40px}.page.active{display:block}
+  .bottom-nav{display:none}.desktop-tabs{display:flex}
+  .content{max-width:940px;margin:0 auto;padding:20px 24px}
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:13px}
+  .toast{bottom:18px;left:auto;right:18px;transform:translateY(24px)}.toast.show{transform:translateY(0)}
+  .f3{grid-template-columns:1fr 1fr 1fr}.chart-wrap{height:170px}.chart-wrap-tall{height:250px}
+  .servicos-grid{grid-template-columns:repeat(3,1fr)}
+  .modal-sheet{border-radius:var(--r)}
+}
+@media(max-width:700px){
+  .f3{grid-template-columns:1fr 1fr}.desktop-tabs{display:none}
+  .charts-row{display:flex;flex-direction:column;gap:11px;margin-top:11px}
+}
+@media(max-width:380px){.f2,.f3{grid-template-columns:1fr}.servicos-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- ══ PDF REPORT ══ -->
+<div id="print-report">
+  <div class="pr-header">
+    <div><div class="pr-brand">✂ ED POINT</div><div class="pr-brand-sub">Perfect Hair · Controle de Atendimentos</div></div>
+    <div class="pr-meta"><div id="pr-data-geracao"></div><div id="pr-periodo"></div></div>
+  </div>
+  <div class="pr-section">
+    <div class="pr-sec-title">RESUMO DO PERÍODO</div>
+    <div class="pr-stats">
+      <div class="pr-stat"><div class="pr-stat-lbl">Total</div><div class="pr-stat-val" id="pr-total">R$ 0</div></div>
+      <div class="pr-stat"><div class="pr-stat-lbl">Recebido</div><div class="pr-stat-val" id="pr-recebido">R$ 0</div></div>
+      <div class="pr-stat"><div class="pr-stat-lbl">Fiado</div><div class="pr-stat-val" id="pr-fiado">R$ 0</div></div>
+      <div class="pr-stat"><div class="pr-stat-lbl">Atendimentos</div><div class="pr-stat-val" id="pr-qt">0</div></div>
+    </div>
+  </div>
+  <div class="pr-section" id="pr-fiados-section"><div class="pr-sec-title">FIADOS EM ABERTO</div><div id="pr-fiados-list"></div></div>
+  <div class="pr-section">
+    <div class="pr-sec-title">HISTÓRICO</div>
+    <table class="pr-table"><thead><tr><th>#</th><th>Data</th><th>Cliente</th><th>Serviço</th><th>Forma</th><th>Valor</th><th>Status</th></tr></thead><tbody id="pr-tbody"></tbody></table>
+  </div>
+  <div class="pr-footer" id="pr-footer"></div>
+</div>
+
+<!-- ══ MODAL SERVIÇO ══ -->
+<div class="modal-backdrop hidden center" id="modal-servico">
+  <div class="modal-sheet center-modal">
+    <div class="modal-title" id="ms-title">➕ Novo Serviço</div>
+    <div class="modal-sub">Preencha os dados do serviço</div>
+    <div class="modal-fg"><label>Ícone (emoji)</label>
+      <div class="emoji-grid" id="emoji-grid">
+        <div class="emoji-opt sel" data-e="✂️">✂️</div><div class="emoji-opt" data-e="💈">💈</div><div class="emoji-opt" data-e="🪒">🪒</div>
+        <div class="emoji-opt" data-e="⚔️">⚔️</div><div class="emoji-opt" data-e="👦">👦</div><div class="emoji-opt" data-e="💆">💆</div>
+        <div class="emoji-opt" data-e="🧴">🧴</div><div class="emoji-opt" data-e="🪮">🪮</div><div class="emoji-opt" data-e="💎">💎</div>
+        <div class="emoji-opt" data-e="⭐">⭐</div><div class="emoji-opt" data-e="🔥">🔥</div><div class="emoji-opt" data-e="➕">➕</div>
+      </div>
+    </div>
+    <div class="modal-fg"><label>Nome do Serviço *</label><input class="modal-inp" id="ms-nome" type="text" placeholder="Ex: Corte Degradê"></div>
+    <div class="frow f2" style="margin-bottom:12px">
+      <div class="modal-fg" style="margin-bottom:0"><label>Preço (R$)</label><input class="modal-inp" id="ms-preco" type="number" placeholder="0.00" min="0" step="0.50" inputmode="decimal"></div>
+      <div class="modal-fg" style="margin-bottom:0"><label>Obs (opcional)</label><input class="modal-inp" id="ms-obs" type="text" placeholder="Ex: Inclui gel"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-gold" style="margin-top:0" id="ms-salvar">✓ SALVAR SERVIÇO</button>
+      <button class="btn-outline" id="ms-cancelar">Cancelar</button>
+    </div>
+    <input type="hidden" id="ms-edit-idx" value="-1">
+  </div>
+</div>
+
+<!-- ══ MODAL SUPABASE ══ -->
+<div class="modal-backdrop hidden center" id="modal-config">
+  <div class="modal-sheet center-modal">
+    <div class="modal-title">⚙ Supabase</div>
+    <div class="modal-sub">Cole a URL e a Anon Key do seu projeto para salvar na nuvem.</div>
+    <div class="modal-fg"><label>URL do Projeto</label><input class="modal-inp" id="cfg-url" type="text" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off" spellcheck="false"></div>
+    <div class="modal-fg"><label>Anon Key</label><input class="modal-inp" id="cfg-key" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." autocomplete="off" spellcheck="false"></div>
+    <div class="modal-actions">
+      <button class="btn-gold" style="flex:1;margin-top:0" id="cfg-salvar">✓ CONECTAR</button>
+      <button class="btn-outline" id="cfg-cancelar">Fechar</button>
+    </div>
+    <div class="modal-hint">💡 <strong>Tabela:</strong> <em>atendimentos</em> — campos: id, cliente_nome, servico, valor, data, forma_pagamento, status, obs, valor_pago</div>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="main-app" style="display:flex;flex-direction:column;height:100%">
+
+<header>
+  <div class="brand">
+    <div class="brand-logo">💈</div>
+    <div class="brand-text">
+      <div class="brand-name">Ed Point</div>
+      <div class="brand-sub">Perfect Hair</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="db-status"><div class="db-dot" id="db-dot"></div><span id="db-status-txt" style="display:none"></span></div>
+    <span id="hdr-date"></span>
+    <button class="btn-hdr" id="btn-exp">⬇ CSV</button>
+    <button class="btn-hdr" id="btn-config" style="border-color:rgba(61,168,105,.3);color:#3DA869">⚙</button>
+  </div>
+</header>
+
+<div class="desktop-tabs">
+  <button class="dtab active" onclick="showPage('comanda',this)">⚡ Comanda</button>
+  <button class="dtab" onclick="showPage('resumo',this)">📊 Dashboard</button>
+  <button class="dtab" onclick="showPage('servicos',this)">⚙ Serviços</button>
+  <button class="dtab" onclick="showPage('corte',this)">✂ Registrar</button>
+  <button class="dtab" onclick="showPage('fiados',this)">💸 Fiados</button>
+  <button class="dtab" onclick="showPage('historico',this)">📋 Histórico</button>
+</div>
+
+<div style="flex:1;overflow:hidden;position:relative" id="pages-wrap">
+
+  <!-- ══ COMANDA RÁPIDA ══ -->
+  <div class="page active" id="page-comanda">
+    <div class="content">
+      <div class="sec-title">⚡ Comanda Rápida <div class="sec-line"></div></div>
+      <div class="comanda-top-bar">
+        <div class="fg">
+          <label>Cliente (vazio = Balcão)</label>
+          <input id="comanda-nome" type="text" placeholder="Cliente Balcão" list="dl-clientes-cmd" autocomplete="off">
+          <datalist id="dl-clientes-cmd"></datalist>
+        </div>
+      </div>
+      <div class="forma-pills" id="forma-pills">
+        <button class="forma-pill ativa" data-forma="Dinheiro">💵 Dinheiro</button>
+        <button class="forma-pill" data-forma="Pix">📲 Pix</button>
+        <button class="forma-pill" data-forma="Cartão">💳 Cartão</button>
+        <button class="forma-pill" data-forma="Fiado">🔴 Fiado</button>
+      </div>
+      <div class="barber-div"><span>💈</span></div>
+      <div class="sec-title" style="margin-bottom:9px">Toque no Serviço <div class="sec-line"></div></div>
+      <div class="servicos-grid" id="servicos-grid"></div>
+      <div class="sec-title" style="margin-top:2px">🕐 Hoje <div class="sec-line"></div>
+        <span id="hoje-total-badge" style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:var(--gold)"></span>
+      </div>
+      <div class="card"><div id="comanda-hoje-list"><div class="empty">Nenhum registro hoje</div></div></div>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="page" id="page-resumo">
+    <div class="content">
+      <div class="versiculo-card">
+        <div class="v-label">✝ Palavra do Dia</div>
+        <div class="v-texto" id="versiculo-texto">...</div>
+        <div class="v-ref" id="versiculo-ref"></div>
+      </div>
+      <div class="alert-fiado hidden" id="alert-fiado">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:17px">⚠️</span>
+          <div><div style="font-size:12px;font-weight:700;color:var(--red)" id="af-txt"></div><div style="font-size:9.5px;color:var(--muted3)">Veja a aba Fiados</div></div>
+        </div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:21px;color:var(--red)" id="af-val"></span>
+      </div>
+      <div class="sec-title">☀ Hoje <div class="sec-line"></div></div>
+      <div class="stats" style="grid-template-columns:1fr 1fr;margin-bottom:10px">
+        <div class="stat s-gold"><div class="stat-glow" style="background:var(--gold)"></div><div class="stat-lbl">Faturamento</div><div class="stat-val" id="s-hoje">R$ 0</div><div class="stat-sub" id="s-hoje-qt">0 atend.</div></div>
+        <div class="stat s-green"><div class="stat-glow" style="background:var(--green)"></div><div class="stat-lbl">Recebido</div><div class="stat-val" id="s-hoje-rec">R$ 0</div><div class="stat-sub">confirmados</div></div>
+      </div>
+      <div class="sec-title">📊 Mês Atual <div class="sec-line"></div></div>
+      <div class="stats">
+        <div class="stat s-gold"><div class="stat-glow" style="background:var(--gold)"></div><div class="stat-lbl">Total do Mês</div><div class="stat-val" id="s-mes">R$ 0</div><div class="stat-sub" id="s-mes-qt">0 atend.</div></div>
+        <div class="stat s-green"><div class="stat-glow" style="background:var(--green)"></div><div class="stat-lbl">Recebido</div><div class="stat-val" id="s-rec">R$ 0</div><div class="stat-sub">confirmados</div></div>
+        <div class="stat s-red"><div class="stat-glow" style="background:var(--red)"></div><div class="stat-lbl">Fiado Aberto</div><div class="stat-val" id="s-fiado">R$ 0</div><div class="stat-sub" id="s-fiado-qt">0 clientes</div></div>
+        <div class="stat s-blue"><div class="stat-glow" style="background:var(--blue)"></div><div class="stat-lbl">Ticket Médio</div><div class="stat-val" id="s-ticket">R$ 0</div><div class="stat-sub">por corte</div></div>
+      </div>
+      <div class="sec-title">🕐 Últimos 5 Atendimentos <div class="sec-line"></div></div>
+      <div class="card" style="margin-bottom:13px"><div id="ultimos-list"><div class="empty">Nenhum atendimento ainda</div></div></div>
+      <div class="charts-row">
+        <div class="card" style="margin-bottom:0"><div class="card-h"><span class="card-t">Receita — 14 dias</span></div><div class="card-b" style="padding:9px"><div class="chart-wrap"><canvas id="chart-daily"></canvas></div></div></div>
+        <div class="card" style="margin-bottom:0"><div class="card-h"><span class="card-t">Receita Mensal</span></div><div class="card-b" style="padding:9px"><div class="chart-wrap"><canvas id="chart-mensal"></canvas></div></div></div>
+      </div>
+      <div class="card" style="margin-top:11px">
+        <div class="card-h"><span class="card-t">Acumulado do Ano</span><span id="s-acumulado-ano" style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--green)"></span></div>
+        <div class="card-b" style="padding:9px"><div class="chart-wrap-tall"><canvas id="chart-acum"></canvas></div></div>
+      </div>
+      <div class="card"><div class="card-h"><span class="card-t">Distribuição do Mês</span></div><div class="card-b" id="resumo-dist"><div class="empty">Sem dados</div></div></div>
+    </div>
+  </div>
+
+  <!-- ══ GESTÃO DE SERVIÇOS ══ -->
+  <div class="page" id="page-servicos">
+    <div class="content">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:8px">
+        <div class="sec-title" style="margin-bottom:0">⚙ Serviços <div class="sec-line" style="width:20px"></div></div>
+        <button class="btn-sm-gold" id="btn-add-servico">➕ Novo Serviço</button>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="card-h"><span class="card-t">Catálogo Ativo</span><span id="cat-count" style="font-size:10px;color:var(--muted3)"></span></div>
+        <div id="catalogo-list"><div class="empty">Nenhum serviço cadastrado</div></div>
+      </div>
+      <div style="font-size:10px;color:var(--muted3);text-align:center;padding:4px 0">💡 Os serviços aparecem na Comanda Rápida automaticamente</div>
+    </div>
+  </div>
+
+  <!-- ══ REGISTRAR MANUAL ══ -->
+  <div class="page" id="page-corte">
+    <div class="content">
+      <div class="sec-title">✂ Registrar Atendimento <div class="sec-line"></div></div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">Novo Atendimento</span></div>
+        <div class="card-b">
+          <div class="frow f2">
+            <div class="fg"><label>Nome do Cliente *</label><input id="f-nome" type="text" placeholder="Ex: João Silva" list="dl-clientes" autocomplete="off"><datalist id="dl-clientes"></datalist></div>
+            <div class="fg"><label>Valor (R$) *</label><input id="f-valor" type="number" placeholder="0,00" min="0" step="0.50" inputmode="decimal"></div>
+          </div>
+          <div class="frow f3">
+            <div class="fg"><label>Data *</label><input id="f-data" type="date"></div>
+            <div class="fg"><label>Serviço</label><select id="f-tipo"></select></div>
+            <div class="fg" id="fg-forma"><label>Forma Pgto</label><select id="f-forma"><option>Dinheiro</option><option>Pix</option><option>Cartão</option></select></div>
+          </div>
+          <div class="fg" style="margin-bottom:11px"><label>Observação</label><input id="f-obs" type="text" placeholder="Detalhes..."></div>
+          <div style="font-size:11px;color:var(--text2);margin-bottom:8px;font-weight:600">Pagou agora?</div>
+          <div class="pay-toggle">
+            <button class="pay-btn sel-pago" id="btn-pago">✅ SIM, PAGOU</button>
+            <button class="pay-btn" id="btn-fiado-tog">❌ NÃO — FIADO</button>
+          </div>
+          <button class="btn-gold" id="btn-lancar">✂ REGISTRAR ATENDIMENTO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FIADOS ══ -->
+  <div class="page" id="page-fiados">
+    <div class="content">
+      <div class="sec-title" style="color:var(--red)">💸 Fiados em Aberto<div class="sec-line" style="background:rgba(201,68,68,.18)"></div><span id="fiado-total-hdr" style="font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:var(--red)"></span></div>
+      <div id="fiados-list"><div class="empty">Nenhum fiado em aberto ✅</div></div>
+    </div>
+  </div>
+
+  <!-- ══ HISTÓRICO ══ -->
+  <div class="page" id="page-historico">
+    <div class="content">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:8px">
+        <div class="sec-title" style="margin-bottom:0">📋 Histórico <div class="sec-line" style="width:20px"></div></div>
+        <button class="btn-hdr" id="btn-pdf" style="border-color:var(--red);color:var(--red)">🖨 PDF</button>
+      </div>
+      <div class="filters-wrap">
+        <input class="filter-inp" id="fil-nome" type="text" placeholder="🔍 Buscar cliente..." autocomplete="off">
+        <select id="fil-mes" class="filter-sel"><option value="">Todos meses</option></select>
+        <select id="fil-tipo" class="filter-sel"><option value="">Serviço</option></select>
+        <select id="fil-st" class="filter-sel"><option value="">Status</option><option>Pago</option><option>Fiado</option></select>
+      </div>
+      <div class="card"><div id="hist-list"><div class="empty">Nenhum registro</div></div></div>
+    </div>
+  </div>
+
+</div><!-- /pages-wrap -->
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-comanda" onclick="showPage('comanda',this)"><span class="nav-ico">⚡</span><span class="nav-lbl">Comanda</span></button>
+  <button class="nav-btn" id="nav-resumo" onclick="showPage('resumo',this)"><span class="nav-ico">📊</span><span class="nav-lbl">Dashboard</span></button>
+  <button class="nav-btn" id="nav-servicos" onclick="showPage('servicos',this)"><span class="nav-ico">⚙</span><span class="nav-lbl">Serviços</span></button>
+  <button class="nav-btn" id="nav-fiados" onclick="showPage('fiados',this)"><span class="nav-ico">💸</span><span class="nav-lbl">Fiados</span><span class="nav-badge" id="badge-fiado" style="display:none">0</span></button>
+  <button class="nav-btn" id="nav-historico" onclick="showPage('historico',this)"><span class="nav-ico">📋</span><span class="nav-lbl">Histórico</span></button>
+</nav>
+
+</div><!-- /main-app -->
+<div class="toast" id="toast"><div class="toast-dot" id="tdot"></div><span id="tmsg"></span></div>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════════
+   ED POINT — Perfect Hair · Sistema de Atendimentos
+   
+   ARQUITETURA:
+   • Supabase  → ÚNICA fonte de dados para atendimentos
+   • localStorage → apenas para catálogo de serviços (configuração local)
+   • setInterval(carregarDados, 2000) → sincronização automática entre devices
+   
+   FLUXO:
+   1. Página carrega → carregarDados() busca tudo do Supabase
+   2. salvarAtendimento() → insere no Supabase → carregarDados() atualiza tela
+   3. deletarAtendimento() → remove do Supabase → carregarDados() atualiza tela
+   4. setInterval a cada 2s → todos os devices ficam sincronizados automaticamente
+   5. ZERO localStorage para atendimentos
+══════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════
+   VERSÍCULOS — 1 diferente por dia do ano
+══════════════════════════════════════════ */
+var VERSICULOS=[
+  {t:"O Senhor é o meu pastor; nada me faltará.",r:"Salmos 23:1"},
+  {t:"Tudo posso naquele que me fortalece.",r:"Filipenses 4:13"},
+  {t:"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito.",r:"João 3:16"},
+  {t:"Confia no Senhor de todo o teu coração e não te apoies no teu próprio entendimento.",r:"Provérbios 3:5"},
+  {t:"Sede fortes e corajosos! Não temais, porque o Senhor vosso Deus vai convosco.",r:"Deuteronômio 31:6"},
+  {t:"O Senhor é a minha luz e a minha salvação; a quem temerei?",r:"Salmos 27:1"},
+  {t:"Buscai primeiro o reino de Deus e a sua justiça, e todas essas coisas vos serão acrescentadas.",r:"Mateus 6:33"},
+  {t:"Não vos conformeis com este século, mas transformai-vos pela renovação do vosso entendimento.",r:"Romanos 12:2"},
+  {t:"Sabemos que todas as coisas contribuem para o bem daqueles que amam a Deus.",r:"Romanos 8:28"},
+  {t:"O amor é paciente, é benigno; o amor não arde em ciúmes.",r:"1 Coríntios 13:4"},
+  {t:"Para Deus nada é impossível.",r:"Lucas 1:37"},
+  {t:"Deleita-te também no Senhor, e ele te concederá o que deseja o teu coração.",r:"Salmos 37:4"},
+  {t:"Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei.",r:"Mateus 11:28"},
+  {t:"Pois conheço os planos que tenho para vocês, diz o Senhor — planos de prosperidade.",r:"Jeremias 29:11"},
+  {t:"Seja forte e corajoso! Não se apavore, pois o Senhor seu Deus estará com você.",r:"Josué 1:9"},
+  {t:"Alegrai-vos sempre no Senhor; outra vez digo: alegrai-vos!",r:"Filipenses 4:4"},
+  {t:"O coração alegre é como bom remédio, mas o espírito abatido seca os ossos.",r:"Provérbios 17:22"},
+  {t:"Mas os que esperam no Senhor renovam as suas forças; voam como águias.",r:"Isaías 40:31"},
+  {t:"A fé é a certeza daquilo que esperamos e a prova das coisas que não vemos.",r:"Hebreus 11:1"},
+  {t:"Pedi e dar-se-vos-á; buscai e achareis; batei e abrir-se-vos-á.",r:"Mateus 7:7"},
+  {t:"Não andeis ansiosos por coisa alguma; em tudo apresentai os vossos pedidos a Deus.",r:"Filipenses 4:6"},
+  {t:"A misericórdia do Senhor dura para sempre sobre os que o temem.",r:"Salmos 103:17"},
+  {t:"Onde dois ou três estiverem reunidos em meu nome, ali estou no meio deles.",r:"Mateus 18:20"},
+  {t:"Quanto a mim e à minha casa, serviremos ao Senhor.",r:"Josué 24:15"},
+  {t:"Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus.",r:"Isaías 41:10"},
+  {t:"O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti.",r:"Números 6:24-25"},
+  {t:"Ama ao Senhor teu Deus de todo o teu coração, com toda a tua alma e todo o teu entendimento.",r:"Mateus 22:37"},
+  {t:"Sê fiel até à morte, e eu te darei a coroa da vida.",r:"Apocalipse 2:10"},
+  {t:"A paz de Deus, que excede todo o entendimento, guardará os vossos corações em Cristo Jesus.",r:"Filipenses 4:7"},
+  {t:"Porque o Senhor dá a sabedoria; da sua boca procedem o conhecimento e o entendimento.",r:"Provérbios 2:6"},
+  {t:"Graças a Deus, que nos dá a vitória por nosso Senhor Jesus Cristo.",r:"1 Coríntios 15:57"},
+  {t:"Ora, ao que é poderoso para fazer tudo muito mais abundantemente além do que pedimos, a ele seja a glória.",r:"Efésios 3:20"},
+  {t:"A palavra do Senhor é correta; tudo o que ele faz é fiel.",r:"Salmos 33:4"},
+  {t:"Lança sobre o Senhor o teu peso, e ele te susterá.",r:"Salmos 55:22"},
+  {t:"Deus é o nosso refúgio e a nossa força, socorro bem presente nas tribulações.",r:"Salmos 46:1"},
+  {t:"O Senhor está perto de todos os que o invocam, de todos os que o invocam em verdade.",r:"Salmos 145:18"},
+  {t:"Permanecei em mim, e eu permanecerei em vós.",r:"João 15:4"},
+  {t:"Eu sou a videira; vós, os ramos. Quem permanece em mim e eu nele dá muito fruto.",r:"João 15:5"},
+  {t:"Porque o Senhor teu Deus está contigo por onde quer que andares.",r:"Josué 1:9"},
+  {t:"Bem-aventurados os pacificadores, pois serão chamados filhos de Deus.",r:"Mateus 5:9"},
+  {t:"Antes de chamardes, eu responderei; ainda estareis falando, e eu já terei ouvido.",r:"Isaías 65:24"},
+  {t:"Deus é amor; e quem permanece em amor permanece em Deus, e Deus permanece nele.",r:"1 João 4:16"},
+  {t:"Dai graças em tudo, porque esta é a vontade de Deus em Cristo Jesus para convosco.",r:"1 Tessalonicenses 5:18"},
+  {t:"Sede, pois, misericordiosos, assim como vosso Pai é misericordioso.",r:"Lucas 6:36"},
+  {t:"Humilhai-vos diante do Senhor, e ele vos exaltará.",r:"Tiago 4:10"},
+  {t:"Sede fortes e corajosos, não temais.",r:"1 Crônicas 22:13"},
+  {t:"Toda boa dádiva e todo dom perfeito vêm do alto, descendo do Pai das luzes.",r:"Tiago 1:17"},
+  {t:"Porque em ti, Senhor, está a fonte da vida; na tua luz veremos a luz.",r:"Salmos 36:9"},
+  {t:"Eu vim para que tenham vida, e a tenham em abundância.",r:"João 10:10"},
+  {t:"Aquele que habita no esconderijo do Altíssimo, à sombra do Onipotente descansará.",r:"Salmos 91:1"},
+  {t:"Posso tudo no Cristo que me fortalece.",r:"Filipenses 4:13"},
+];
+
+function renderVersiculo(){
+  var inicio=new Date(new Date().getFullYear(),0,0);
+  var dia=Math.floor((new Date()-inicio)/86400000);
+  var v=VERSICULOS[dia%VERSICULOS.length];
+  document.getElementById('versiculo-texto').textContent='\u201c'+v.t+'\u201d';
+  document.getElementById('versiculo-ref').textContent=v.r;
+}
+
+/* ══════════════════════════════════════════
+   SUPABASE — ÚNICA FONTE DE DADOS
+   
+   Credenciais fixas no código.
+   Nenhum dado de atendimento vai para localStorage.
+   Sincronização automática via setInterval a cada 2s.
+══════════════════════════════════════════ */
+
+// ─── CREDENCIAIS DO SUPABASE (NÃO ALTERAR) ─────────────────────
+var SB_URL = 'https://vspiunwubpzygeneecng.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzcGl1bnd1YnB6eWdlbmVlY25nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NjE3NjgsImV4cCI6MjA4OTQzNzc2OH0._AydDdK846tUsWyy9qjf4CBXs9LApETmMyE_DTVpJCE';
+var TABLE  = 'atendimentos';
+// ───────────────────────────────────────────────────────────────
+
+// Cliente Supabase singleton — recriado apenas quando config muda via modal
+var _sbClient = null;
+
+function getSBClient() {
+  if (_sbClient) return _sbClient;
+  if (!isCfg()) return null;
+  _sbClient = window.supabase.createClient(SB_URL, SB_KEY);
+  console.log('[EdPoint] ✅ Supabase Client criado');
+  return _sbClient;
+}
+
+// Verifica se as credenciais estão válidas
+function isCfg() {
+  return SB_URL && SB_KEY &&
+    SB_URL !== 'YOUR_SUPABASE_URL' &&
+    SB_KEY !== 'YOUR_SUPABASE_ANON_KEY' &&
+    SB_KEY !== 'COLE_MINHA_CHAVE_AQUI';
+}
+
+// Indicador de status no header
+function setSb(ok, label) {
+  var d = document.getElementById('db-dot');
+  var t = document.getElementById('db-status-txt');
+  d.className = 'db-dot ' + (ok ? 'online' : (label === 'SYNC' ? 'offline' : 'error'));
+  t.style.display = 'block';
+  t.textContent   = label || (ok ? 'ONLINE' : 'OFFLINE');
+}
+
+/* ── MAPEAMENTO: objeto local → linha do Supabase ── */
+function toSB(a) {
+  return {
+    cliente_nome    : a.nome,
+    servico         : a.tipo,
+    valor           : a.valor,
+    data            : a.data,
+    forma_pagamento : a.forma     || '',
+    status          : a.status,
+    obs             : a.obs       || '',
+    valor_pago      : a.valorPago || 0
+  };
+}
+
+/* ── MAPEAMENTO: linha do Supabase → objeto local ── */
+function fromSB(r) {
+  return {
+    id        : r.id,
+    nome      : r.cliente_nome,
+    tipo      : r.servico,
+    valor     : parseFloat(r.valor)      || 0,
+    data      : r.data,
+    forma     : r.forma_pagamento        || '',
+    status    : r.status                 || 'Pago',
+    obs       : r.obs                    || '',
+    valorPago : parseFloat(r.valor_pago) || parseFloat(r.valor) || 0,
+    _sb       : true
+  };
+}
+
+/* ══════════════════════════════════════════
+   carregarDados — FUNÇÃO PRINCIPAL DE SYNC
+   
+   Busca todos os atendimentos do Supabase,
+   ordenados por created_at DESC, e atualiza
+   a interface. Chamada pelo setInterval.
+══════════════════════════════════════════ */
+async function carregarDados() {
+  if (!isCfg()) return;
+
+  var sb = getSBClient();
+  if (!sb) return;
+
+  var { data, error } = await sb
+    .from(TABLE)
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1000);
+
+  if (error) {
+    console.error('[EdPoint] ❌ carregarDados erro:', error.message);
+    setSb(false, 'ERRO');
+    return;
+  }
+
+  // Substitui o array local completamente pelo banco — sem duplicatas
+  DB.atend = data.map(fromSB);
+  setSb(true, 'LIVE');
+  renderAll();
+  console.log('[EdPoint] ✅ carregarDados — ' + data.length + ' registros');
+}
+
+/* ══════════════════════════════════════════
+   salvarAtendimento — INSERT NO SUPABASE
+   
+   Insere no banco e só atualiza a tela
+   após confirmação de sucesso.
+   NÃO salva nada em localStorage.
+══════════════════════════════════════════ */
+async function salvarAtendimento(dados) {
+  if (!isCfg()) {
+    toast('⚠ Configure o Supabase para salvar!', 'var(--orange)');
+    return null;
+  }
+
+  var sb = getSBClient();
+  if (!sb) return null;
+
+  var { data, error } = await sb
+    .from(TABLE)
+    .insert(toSB(dados))
+    .select();
+
+  if (error) {
+    console.error('[EdPoint] ❌ salvarAtendimento erro:', error.message);
+    setSb(false, 'ERRO');
+    toast('❌ Erro ao salvar: ' + error.message, 'var(--red)');
+    return null;
+  }
+
+  console.log('[EdPoint] ✅ salvarAtendimento OK');
+  // Só atualiza a tela após sucesso no banco
+  await carregarDados();
+  return Array.isArray(data) ? data[0] : data;
+}
+
+/* ══════════════════════════════════════════
+   deletarAtendimento — DELETE NO SUPABASE
+   
+   Remove do banco e atualiza a tela.
+══════════════════════════════════════════ */
+async function deletarAtendimento(id) {
+  if (!isCfg()) {
+    toast('⚠ Supabase não configurado', 'var(--orange)');
+    return;
+  }
+
+  var sb = getSBClient();
+  if (!sb) return;
+
+  var { error } = await sb
+    .from(TABLE)
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('[EdPoint] ❌ deletarAtendimento erro:', error.message);
+    setSb(false, 'ERRO');
+    toast('❌ Erro ao deletar: ' + error.message, 'var(--red)');
+    return;
+  }
+
+  console.log('[EdPoint] ✅ deletarAtendimento OK');
+  toast('Removido', 'var(--orange)');
+  // Atualiza a tela direto do banco
+  await carregarDados();
+}
+
+/* ── UPDATE: atualiza campos específicos de um registro ── */
+async function sbUpdate(id, fields) {
+  var sb = getSBClient();
+  if (!sb) return;
+  var { error } = await sb.from(TABLE).update(fields).eq('id', id);
+  if (error) {
+    console.error('[EdPoint] ❌ sbUpdate erro:', error.message);
+    setSb(false, 'ERRO');
+    return;
+  }
+  console.log('[EdPoint] ✅ sbUpdate OK');
+  await carregarDados();
+}
+
+/* ── syncSB: alias para carregarDados (compatibilidade com modal config) ── */
+async function syncSB() {
+  await carregarDados();
+}
+
+/* ══════════════════════════════════════════
+   SINCRONIZAÇÃO AUTOMÁTICA ENTRE DEVICES
+   
+   Polling a cada 2 segundos — garante que
+   celular e computador ficam sincronizados
+   sem depender de nenhuma config externa.
+══════════════════════════════════════════ */
+setInterval(carregarDados, 2000);
+
+// Quando o app volta ao foco (celular saiu do background),
+// re-sincroniza imediatamente sem esperar o próximo tick
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible' && isCfg()) {
+    console.log('[EdPoint] Aba visível → carregando dados...');
+    carregarDados();
+  }
+});
+
+/* ══════════════════════════════════════════
+   DB — Estado em memória
+   
+   IMPORTANTE: DB.atend é apenas um cache em
+   memória do que está no Supabase. Nunca é
+   salvo em localStorage. Sempre vem do banco.
+   
+   DB.servicos fica em localStorage pois é
+   configuração local (catálogo de serviços).
+══════════════════════════════════════════ */
+var DB = {
+  atend: [],  // ← SEMPRE vazio ao iniciar; preenchido pelo syncSB()
+  servicos: JSON.parse(localStorage.getItem('ep_servicos') || 'null') || [
+    { nome: 'Corte',         preco: 40, ico: '✂️', obs: '' },
+    { nome: 'Corte + Barba', preco: 65, ico: '💈', obs: '' },
+    { nome: 'Barba',         preco: 30, ico: '🪒', obs: '' },
+    { nome: 'Navalhado',     preco: 50, ico: '⚔️', obs: '' },
+    { nome: 'Corte Kids',    preco: 30, ico: '👦', obs: '' },
+    { nome: 'Gel / Pomada',  preco: 5,  ico: '🧴', obs: 'Produto' },
+    { nome: 'Outro',         preco: 0,  ico: '➕', obs: 'Valor livre' },
+  ]
+};
+
+var pagtoSel = 'pago', currentPage = 'comanda', formaSel = 'Dinheiro';
+var chartDaily = null, chartMensal = null, chartAcum = null;
+
+// Salva APENAS o catálogo de serviços (configuração local)
+// Atendimentos NÃO são salvos em localStorage — ficam no Supabase
+function save() {
+  localStorage.setItem('ep_servicos', JSON.stringify(DB.servicos));
+  // Nota: ep_atend removido intencionalmente — Supabase é a fonte da verdade
+}
+
+/* ══════════════════════════════════════════
+   CATÁLOGO — GESTÃO DE SERVIÇOS
+══════════════════════════════════════════ */
+function buildServicosGrid(){
+  var g=document.getElementById('servicos-grid');
+  if(!DB.servicos.length){g.innerHTML='<div class="empty" style="grid-column:span 2">Nenhum serviço. Vá em ⚙ Serviços para adicionar.</div>';return;}
+  g.innerHTML=DB.servicos.map(function(s,i){
+    return'<div class="servico-card" onclick="registrarComanda('+i+')" data-idx="'+i+'">'+
+      '<div class="s-ico">'+s.ico+'</div>'+
+      '<div class="s-nome">'+s.nome+'</div>'+
+      '<div class="s-preco" style="color:var(--gold)">'+(s.preco>0?fmt(s.preco):'Livre')+'</div>'+
+      (s.obs?'<div style="font-size:9px;color:var(--muted3)">'+s.obs+'</div>':'')+
+      '<div class="s-tap">Registrar</div>'+
+      '</div>';
+  }).join('');
+  // atualiza select do form manual
+  var sel=document.getElementById('f-tipo');
+  sel.innerHTML=DB.servicos.map(function(s){return'<option>'+s.nome+'</option>';}).join('');
+  // atualiza filtro histórico
+  var ft=document.getElementById('fil-tipo');
+  ft.innerHTML='<option value="">Serviço</option>'+DB.servicos.map(function(s){return'<option>'+s.nome+'</option>';}).join('');
+}
+
+function renderCatalogo(){
+  var el=document.getElementById('catalogo-list');
+  document.getElementById('cat-count').textContent=DB.servicos.length+' serviço'+(DB.servicos.length!==1?'s':'');
+  if(!DB.servicos.length){el.innerHTML='<div class="empty">Nenhum serviço. Toque em Novo Serviço.</div>';return;}
+  el.innerHTML=DB.servicos.map(function(s,i){
+    return'<div class="catalogo-item">'+
+      '<div class="cat-ico">'+s.ico+'</div>'+
+      '<div class="cat-info">'+
+        '<div class="cat-nome">'+s.nome+'</div>'+
+        '<div class="cat-preco">'+(s.preco>0?fmt(s.preco):'Livre')+'</div>'+
+        (s.obs?'<div class="cat-obs">'+s.obs+'</div>':'')+
+      '</div>'+
+      '<div class="cat-actions">'+
+        '<button class="btn-icon" onclick="editServico('+i+')" title="Editar">✏️</button>'+
+        '<button class="btn-icon" style="color:var(--red);border-color:rgba(201,68,68,.3)" onclick="deleteServico('+i+')" title="Excluir">🗑️</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+/* Modal add/edit serviço */
+var emojiSel='✂️';
+document.getElementById('emoji-grid').onclick=function(e){
+  var opt=e.target.closest('.emoji-opt');if(!opt)return;
+  document.querySelectorAll('.emoji-opt').forEach(function(o){o.classList.remove('sel');});
+  opt.classList.add('sel');emojiSel=opt.dataset.e;
+};
+
+function abrirModalServico(idx){
+  document.getElementById('ms-edit-idx').value=idx!=null?idx:-1;
+  if(idx!=null){
+    var s=DB.servicos[idx];
+    document.getElementById('ms-title').textContent='✏️ Editar Serviço';
+    document.getElementById('ms-nome').value=s.nome;
+    document.getElementById('ms-preco').value=s.preco||'';
+    document.getElementById('ms-obs').value=s.obs||'';
+    emojiSel=s.ico;
+    document.querySelectorAll('.emoji-opt').forEach(function(o){o.classList.toggle('sel',o.dataset.e===s.ico);});
+  } else {
+    document.getElementById('ms-title').textContent='➕ Novo Serviço';
+    document.getElementById('ms-nome').value='';
+    document.getElementById('ms-preco').value='';
+    document.getElementById('ms-obs').value='';
+    emojiSel='✂️';
+    document.querySelectorAll('.emoji-opt').forEach(function(o){o.classList.toggle('sel',o.dataset.e==='✂️');});
+  }
+  document.getElementById('modal-servico').classList.remove('hidden');
+  setTimeout(function(){document.getElementById('ms-nome').focus();},100);
+}
+
+window.editServico=function(i){abrirModalServico(i);};
+window.deleteServico=function(i){
+  if(!confirm('Excluir "'+DB.servicos[i].nome+'"?'))return;
+  DB.servicos.splice(i,1);save();  // save() aqui = correto, salva catálogo
+  renderCatalogo();buildServicosGrid();
+  toast('Serviço removido','var(--orange)');
+};
+document.getElementById('btn-add-servico').onclick=function(){abrirModalServico(null);};
+document.getElementById('ms-cancelar').onclick=function(){document.getElementById('modal-servico').classList.add('hidden');};
+document.getElementById('ms-salvar').onclick=function(){
+  var nome=document.getElementById('ms-nome').value.trim();
+  var preco=parseFloat(document.getElementById('ms-preco').value)||0;
+  var obs=document.getElementById('ms-obs').value.trim();
+  if(!nome){toast('Informe o nome!','var(--red)');return;}
+  var s={nome:nome,preco:preco,ico:emojiSel,obs:obs};
+  var idx=parseInt(document.getElementById('ms-edit-idx').value);
+  if(idx>=0){DB.servicos[idx]=s;toast('✅ Serviço atualizado!','var(--green)');}
+  else{DB.servicos.push(s);toast('✅ Serviço adicionado!','var(--green)');}
+  save();renderCatalogo();buildServicosGrid();
+  document.getElementById('modal-servico').classList.add('hidden');
+};
+document.getElementById('modal-servico').onclick=function(e){if(e.target===this)this.classList.add('hidden');};
+
+/* ══════════════════════════════════════════
+   COMANDA RÁPIDA
+══════════════════════════════════════════ */
+window.registrarComanda=async function(idx){
+  var s=DB.servicos[idx];if(!s)return;
+  var nome=(document.getElementById('comanda-nome').value.trim())||'Cliente Balcão';
+  var forma=formaSel;
+  var valor=s.preco;
+  if(s.preco===0){var vs=prompt('Informe o valor (R$):');valor=parseFloat((vs||'').replace(',','.'));if(!valor||valor<=0){toast('Valor inválido','var(--red)');return;};}
+  var card=document.querySelector('.servico-card[data-idx="'+idx+'"]');
+  if(card){card.classList.add('flash');setTimeout(function(){card.classList.remove('flash');},600);}
+  if(navigator.vibrate)navigator.vibrate(50);
+
+  // Monta o objeto de registro (sem ID local — ID real vem do Supabase)
+  var rec={
+    nome:nome, valor:valor, data:today(), tipo:s.nome,
+    forma:forma, obs:s.obs||'',
+    status:forma==='Fiado'?'Fiado':'Pago',
+    valorPago:forma==='Fiado'?0:valor
+  };
+
+  if(!isCfg()){
+    toast('⚠ Configure o Supabase para salvar!','var(--orange)');
+    return;
+  }
+
+  toast('⏳ Salvando...','var(--gold)');
+
+  // salvarAtendimento insere no Supabase e só atualiza a tela após sucesso
+  var res = await salvarAtendimento(rec);
+  if(res){
+    toast('✅ '+s.nome+' · '+nome+' · '+fmt(valor), forma==='Fiado'?'var(--red)':'var(--green)');
+  }
+};
+
+document.getElementById('forma-pills').onclick=function(e){
+  var b=e.target.closest('.forma-pill');if(!b)return;
+  formaSel=b.dataset.forma;
+  document.querySelectorAll('.forma-pill').forEach(function(p){p.classList.remove('ativa');});
+  b.classList.add('ativa');
+};
+
+/* ══════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════ */
+function fmt(v){return'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtD(d){if(!d)return'';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function ym(d){return d?d.slice(0,7):'';}
+function today(){return new Date().toISOString().split('T')[0];}
+function mesAtual(){return today().slice(0,7);}
+function anoAtual(){return today().slice(0,4);}
+function getMesLbl(d){if(!d)return'';return new Date(d+'T12:00').toLocaleDateString('pt-BR',{month:'short',year:'2-digit'});}
+function getMesAbrev(m){return['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][m];}
+function toast(msg,cor){
+  document.getElementById('tmsg').textContent=msg;
+  document.getElementById('tdot').style.background=cor||'var(--green)';
+  var t=document.getElementById('toast');t.classList.remove('show');void t.offsetWidth;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3200);
+}
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+window.showPage=function(name,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  var nb=document.getElementById('nav-'+name);if(nb)nb.classList.add('active');
+  document.querySelectorAll('.dtab').forEach(function(b){b.classList.remove('active');});
+  if(el&&el.classList&&el.classList.contains('dtab'))el.classList.add('active');
+  currentPage=name;
+  var pg=document.getElementById('page-'+name);if(pg)pg.scrollTop=0;
+  if(name==='historico')renderHistorico();
+  if(name==='servicos'){renderCatalogo();}
+  if(name==='resumo')renderVersiculo();
+};
+
+/* ══════════════════════════════════════════
+   PAY TOGGLE
+══════════════════════════════════════════ */
+function selPagto(v){pagtoSel=v;document.getElementById('btn-pago').className='pay-btn'+(v==='pago'?' sel-pago':'');document.getElementById('btn-fiado-tog').className='pay-btn'+(v==='fiado'?' sel-fiado':'');document.getElementById('fg-forma').style.opacity=v==='fiado'?'0.35':'1';}
+document.getElementById('btn-pago').onclick=function(){selPagto('pago');};
+document.getElementById('btn-fiado-tog').onclick=function(){selPagto('fiado');};
+
+/* ══════════════════════════════════════════
+   REGISTRAR MANUAL
+══════════════════════════════════════════ */
+document.getElementById('btn-lancar').onclick=async function(){
+  var nome=document.getElementById('f-nome').value.trim();
+  var valor=parseFloat(document.getElementById('f-valor').value);
+  var data=document.getElementById('f-data').value;
+  var tipo=document.getElementById('f-tipo').value;
+  var forma=pagtoSel==='fiado'?'Fiado':document.getElementById('f-forma').value;
+  var obs=document.getElementById('f-obs').value.trim();
+  if(!nome){toast('Informe o nome!','var(--red)');return;}
+  if(!valor||valor<=0){toast('Informe o valor!','var(--red)');return;}
+  if(!data){toast('Informe a data!','var(--red)');return;}
+
+  if(!isCfg()){toast('⚠ Configure o Supabase para salvar!','var(--orange)');return;}
+
+  var rec={
+    nome:nome, valor:valor, data:data, tipo:tipo,
+    forma:forma, obs:obs||'',
+    status:pagtoSel==='fiado'?'Fiado':'Pago',
+    valorPago:pagtoSel==='fiado'?0:valor
+  };
+
+  // Limpa o formulário imediatamente para boa UX
+  document.getElementById('f-nome').value='';
+  document.getElementById('f-valor').value='';
+  document.getElementById('f-obs').value='';
+  selPagto('pago');
+  if(navigator.vibrate)navigator.vibrate(50);
+  toast('⏳ Salvando...','var(--gold)');
+
+  // salvarAtendimento insere no Supabase e só atualiza a tela após sucesso
+  var res = await salvarAtendimento(rec);
+  if(res){
+    toast(pagtoSel==='fiado'?'🔴 Fiado de '+nome+'!':'✂ '+nome+' registrado!',
+          pagtoSel==='fiado'?'var(--red)':'var(--green)');
+  }
+};
+
+/* ══════════════════════════════════════════
+   DELETAR
+══════════════════════════════════════════ */
+window.delAtend=async function(id){
+  if(!confirm('Remover este atendimento?'))return;
+  if(!isCfg()){toast('⚠ Supabase não configurado','var(--orange)');return;}
+  await deletarAtendimento(id);
+};
+
+/* ══════════════════════════════════════════
+   FIADOS
+══════════════════════════════════════════ */
+window.baixa=async function(nome){
+  var sk=nome.replace(/\s+/g,'_');
+  var val=parseFloat(document.getElementById('inp-'+sk).value);
+  if(!val||val<=0){toast('Informe o valor!','var(--red)');return;}
+  var restante=val,toUp=[];
+  DB.atend.filter(function(a){return a.nome.toLowerCase()===nome.toLowerCase()&&a.status==='Fiado'&&(a.valorPago||0)<a.valor;})
+    .sort(function(a,b){return a.data>b.data?1:-1;})
+    .forEach(function(a){if(restante<=0)return;var em=a.valor-(a.valorPago||0);if(restante>=em){a.valorPago=a.valor;a.status='Pago';a.forma='Pago posterior';restante-=em;}else{a.valorPago=(a.valorPago||0)+restante;restante=0;}toUp.push(a);});
+  document.getElementById('inp-'+sk).value='';
+  toast('💰 Baixa de '+fmt(val)+' para '+nome+'!');
+  if(navigator.vibrate)navigator.vibrate([30,20,30]);
+  if(isCfg()){
+    var sb=getSBClient();
+    if(sb){
+      for(var i=0;i<toUp.length;i++){
+        var a=toUp[i];
+        await sb.from(TABLE).update({status:a.status,valor_pago:a.valorPago,forma_pagamento:a.forma}).eq('id',a.id);
+      }
+      // Atualiza tela uma única vez após todos os updates
+      await carregarDados();
+    }
+  }
+};
+window.quitarTudo=async function(nome){
+  var toUp=[];
+  DB.atend.filter(function(a){return a.nome.toLowerCase()===nome.toLowerCase()&&a.status==='Fiado';})
+    .forEach(function(a){a.status='Pago';a.valorPago=a.valor;a.forma='Pago posterior';toUp.push(a);});
+  toast('✅ '+nome+' quitou tudo!','var(--green)');
+  if(isCfg()){
+    var sb=getSBClient();
+    if(sb){
+      for(var i=0;i<toUp.length;i++){
+        await sb.from(TABLE).update({status:'Pago',valor_pago:toUp[i].valor,forma_pagamento:'Pago posterior'}).eq('id',toUp[i].id);
+      }
+      // Atualiza tela uma única vez após todos os updates
+      await carregarDados();
+    }
+  }
+};
+
+/* ══════════════════════════════════════════
+   CHARTS
+══════════════════════════════════════════ */
+var CD={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#111',borderColor:'#242424',borderWidth:1,titleColor:'#F0F0F0',bodyColor:'#686868',padding:9,callbacks:{label:function(c){return' R$ '+c.parsed.y.toLocaleString('pt-BR',{minimumFractionDigits:2});}}}},scales:{x:{grid:{color:'rgba(255,255,255,.028)'},ticks:{color:'#3A3A3A',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,.028)'},ticks:{color:'#3A3A3A',font:{size:9},callback:function(v){return'R$'+v.toLocaleString('pt-BR');}},beginAtZero:true}}};
+function renderChartDaily(){
+  var byDay={};DB.atend.forEach(function(a){if(!byDay[a.data])byDay[a.data]=0;byDay[a.data]+=a.valor;});
+  var days=Object.keys(byDay).sort().slice(-14);
+  var vals=days.map(function(d){return byDay[d];});
+  var mx=Math.max.apply(null,vals.concat([0]));
+  var ctx=document.getElementById('chart-daily').getContext('2d');
+  if(chartDaily)chartDaily.destroy();
+  chartDaily=new Chart(ctx,{type:'bar',data:{labels:days.map(function(d){return d.split('-')[2]+'/'+d.split('-')[1];}),datasets:[{data:vals,backgroundColor:vals.map(function(v){return v===mx?'rgba(200,168,75,.95)':'rgba(200,168,75,.35)';}),borderColor:'rgba(200,168,75,.5)',borderWidth:1,borderRadius:5,borderSkipped:false}]},options:Object.assign({},CD)});
+}
+function renderChartMensal(){
+  var ano=anoAtual(),meses=[0,1,2,3,4,5,6,7,8,9,10,11];
+  var vals=meses.map(function(m){var p=ano+'-'+(m<9?'0':'')+(m+1);return DB.atend.filter(function(a){return a.data&&a.data.startsWith(p);}).reduce(function(s,a){return s+a.valor;},0);});
+  var ctx=document.getElementById('chart-mensal').getContext('2d');
+  if(chartMensal)chartMensal.destroy();
+  chartMensal=new Chart(ctx,{type:'bar',data:{labels:meses.map(getMesAbrev),datasets:[{data:vals,backgroundColor:vals.map(function(v,i){return i===new Date().getMonth()?'rgba(61,168,105,.95)':'rgba(61,168,105,.35)';}),borderColor:'rgba(61,168,105,.5)',borderWidth:1,borderRadius:5,borderSkipped:false}]},options:Object.assign({},CD)});
+}
+function renderChartAcumulado(){
+  var ano=anoAtual(),meses=[0,1,2,3,4,5,6,7,8,9,10,11],acum=0;
+  var vals=meses.map(function(m){var p=ano+'-'+(m<9?'0':'')+(m+1);acum+=DB.atend.filter(function(a){return a.data&&a.data.startsWith(p);}).reduce(function(s,a){return s+a.valor;},0);return acum;});
+  document.getElementById('s-acumulado-ano').textContent=fmt(acum);
+  var ctx=document.getElementById('chart-acum').getContext('2d');
+  var g=ctx.createLinearGradient(0,0,0,210);g.addColorStop(0,'rgba(58,127,196,.45)');g.addColorStop(1,'rgba(58,127,196,.02)');
+  if(chartAcum)chartAcum.destroy();
+  chartAcum=new Chart(ctx,{type:'line',data:{labels:meses.map(getMesAbrev),datasets:[{data:vals,fill:true,backgroundColor:g,borderColor:'rgba(58,127,196,.9)',borderWidth:2,pointBackgroundColor:'rgba(58,127,196,1)',pointRadius:3,pointHoverRadius:5,tension:0.4}]},options:Object.assign({},CD)});
+}
+
+/* ══════════════════════════════════════════
+   RENDER STATS
+══════════════════════════════════════════ */
+function renderStats(){
+  var hj=today(),ma=mesAtual();
+  var doHoje=DB.atend.filter(function(a){return a.data===hj;});
+  var totalHoje=doHoje.reduce(function(s,a){return s+a.valor;},0);
+  var recHoje=doHoje.filter(function(a){return a.status==='Pago';}).reduce(function(s,a){return s+a.valor;},0);
+  document.getElementById('s-hoje').textContent=fmt(totalHoje);
+  document.getElementById('s-hoje-qt').textContent=doHoje.length+' atend.';
+  document.getElementById('s-hoje-rec').textContent=fmt(recHoje);
+  var doMes=DB.atend.filter(function(a){return ym(a.data)===ma;});
+  var totalMes=doMes.reduce(function(s,a){return s+a.valor;},0);
+  var recebido=doMes.filter(function(a){return a.status==='Pago';}).reduce(function(s,a){return s+a.valor;},0);
+  var ticket=doMes.length?totalMes/doMes.length:0;
+  var fAb=DB.atend.filter(function(a){return a.status==='Fiado';});
+  var totF=fAb.reduce(function(s,a){return s+(a.valor-(a.valorPago||0));},0);
+  var pset={};fAb.forEach(function(a){pset[a.nome.toLowerCase()]=1;});
+  var nF=Object.keys(pset).length;
+  document.getElementById('s-mes').textContent=fmt(totalMes);
+  document.getElementById('s-mes-qt').textContent=doMes.length+' atend.';
+  document.getElementById('s-rec').textContent=fmt(recebido);
+  document.getElementById('s-fiado').textContent=fmt(totF);
+  document.getElementById('s-fiado-qt').textContent=nF+' cliente'+(nF!==1?'s':'');
+  document.getElementById('s-ticket').textContent=fmt(ticket);
+  var al=document.getElementById('alert-fiado');
+  if(totF>0){al.classList.remove('hidden');document.getElementById('af-txt').textContent='⚠ '+nF+' cliente'+(nF!==1?'s':'')+' com fiado';document.getElementById('af-val').textContent=fmt(totF);var b=document.getElementById('badge-fiado');b.textContent=nF;b.style.display='flex';}
+  else{al.classList.add('hidden');document.getElementById('badge-fiado').style.display='none';}
+}
+
+function renderComandaHoje(){
+  var hj=today(),list=DB.atend.filter(function(a){return a.data===hj;});
+  var tot=list.reduce(function(s,a){return s+a.valor;},0);
+  document.getElementById('hoje-total-badge').textContent=list.length>0?fmt(tot):'';
+  var el=document.getElementById('comanda-hoje-list');
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum registro hoje</div>';return;}
+  el.innerHTML=list.slice(0,10).map(function(a){
+    return'<div class="hist-item"><div class="hi-left"><div class="hi-nome">'+a.nome+'</div><div class="hi-det"><span class="badge b-d">'+a.tipo+'</span>'+(a.forma?' · '+a.forma:'')+'</div></div><div class="hi-right"><div class="hi-val '+(a.status==='Pago'?'pago':'fiado')+'">'+fmt(a.valor)+'</div><span class="badge '+(a.status==='Pago'?'b-pago':'b-fiado')+'">'+a.status+'</span></div></div>';
+  }).join('');
+}
+
+function renderUltimos(){
+  var list=DB.atend.slice(0,5); // ← APENAS 5
+  var el=document.getElementById('ultimos-list');
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum atendimento ainda</div>';return;}
+  el.innerHTML=list.map(function(a){return'<div class="hist-item"><div class="hi-left"><div class="hi-nome">'+a.nome+'</div><div class="hi-det">'+fmtD(a.data)+' · <span class="badge b-d">'+a.tipo+'</span>'+(a.forma?' · '+a.forma:'')+'</div></div><div class="hi-right"><div class="hi-val '+(a.status==='Pago'?'pago':'fiado')+'">'+fmt(a.valor)+'</div><span class="badge '+(a.status==='Pago'?'b-pago':'b-fiado')+'">'+a.status+'</span></div></div>';}).join('');
+}
+
+function renderDist(){
+  var ma=mesAtual(),doMes=DB.atend.filter(function(a){return ym(a.data)===ma;});
+  var pago=doMes.filter(function(a){return a.status==='Pago';}).reduce(function(s,a){return s+a.valor;},0);
+  var fiado=doMes.filter(function(a){return a.status==='Fiado';}).reduce(function(s,a){return s+a.valor;},0);
+  var tot=(pago+fiado)||1;
+  var el=document.getElementById('resumo-dist');
+  if(!doMes.length){el.innerHTML='<div class="empty">Sem dados este mês</div>';return;}
+  el.innerHTML='<div class="dist-row"><span class="dist-lbl">💚 Pago</span><div class="dist-track"><div class="dist-fill" style="width:'+(pago/tot*100)+'%;background:var(--green)"></div></div><span class="dist-val" style="color:var(--green)">'+fmt(pago)+'</span></div>'+
+    '<div class="dist-row"><span class="dist-lbl">🔴 Fiado</span><div class="dist-track"><div class="dist-fill" style="width:'+(fiado/tot*100)+'%;background:var(--red)"></div></div><span class="dist-val" style="color:var(--red)">'+fmt(fiado)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;margin-top:13px;padding-top:11px;border-top:1px solid var(--border)">'+
+    '<div style="text-align:center"><div style="font-size:7px;color:var(--muted3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Atendimentos</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:19px;color:var(--gold)">'+doMes.length+'</div></div>'+
+    '<div style="text-align:center"><div style="font-size:7px;color:var(--muted3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Ticket Médio</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:19px;color:var(--blue)">'+fmt(tot/doMes.length)+'</div></div>'+
+    '<div style="text-align:center"><div style="font-size:7px;color:var(--muted3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Taxa Receb.</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:19px;color:var(--green)">'+(pago/tot*100).toFixed(0)+'%</div></div></div>';
+}
+
+function renderFiados(){
+  var grupos={};
+  DB.atend.filter(function(a){return a.status==='Fiado';}).forEach(function(a){var k=a.nome.toLowerCase();if(!grupos[k])grupos[k]={nome:a.nome,itens:[],emAberto:0};grupos[k].itens.push(a);grupos[k].emAberto+=(a.valor-(a.valorPago||0));});
+  var keys=Object.keys(grupos);
+  var totG=keys.reduce(function(s,k){return s+grupos[k].emAberto;},0);
+  document.getElementById('fiado-total-hdr').textContent=totG>0?fmt(totG):'';
+  var el=document.getElementById('fiados-list');
+  if(!keys.length){el.innerHTML='<div class="empty">Nenhum fiado em aberto ✅</div>';return;}
+  el.innerHTML=keys.sort(function(a,b){return grupos[b].emAberto-grupos[a].emAberto;}).map(function(k){
+    var c=grupos[k],sk=c.nome.replace(/\s+/g,'_');
+    return'<div class="fc"><div class="fc-top"><div><div class="fc-nome">'+c.nome+'</div><div style="font-size:9.5px;color:var(--muted3)">'+c.itens.length+' item'+(c.itens.length!==1?'s':'')+' em aberto</div></div><div class="fc-valor">'+fmt(c.emAberto)+'</div></div>'+
+      c.itens.sort(function(a,b){return a.data>b.data?1:-1;}).map(function(it){return'<div class="fc-item"><span>'+fmtD(it.data)+' — '+(it.obs||it.tipo)+'</span><span style="color:var(--text);font-weight:600">'+fmt(it.valor-(it.valorPago||0))+'</span></div>';}).join('')+
+      '<div class="fc-actions"><input class="fc-inp" id="inp-'+sk+'" type="number" placeholder="Valor recebido..." inputmode="decimal">'+
+      '<button class="btn-baixa" onclick="baixa(\''+c.nome+'\')">💰 BAIXA</button>'+
+      '<button class="btn-quitar" onclick="quitarTudo(\''+c.nome+'\')">✅ QUITOU</button></div></div>';
+  }).join('');
+}
+
+function renderHistorico(){
+  var fNome=(document.getElementById('fil-nome').value||'').toLowerCase().trim();
+  var fMes=document.getElementById('fil-mes').value;
+  var fTipo=document.getElementById('fil-tipo').value;
+  var fSt=document.getElementById('fil-st').value;
+  var meses=[];DB.atend.forEach(function(a){var m=getMesLbl(a.data);if(m&&meses.indexOf(m)===-1)meses.push(m);});
+  var selMes=document.getElementById('fil-mes'),cv=selMes.value;
+  selMes.innerHTML='<option value="">Todos meses</option>'+meses.map(function(m){return'<option value="'+m+'"'+(m===cv?' selected':'')+'>'+m+'</option>';}).join('');
+  var nomes=DB.atend.map(function(a){return a.nome;}).filter(function(n,i,arr){return arr.indexOf(n)===i;});
+  document.getElementById('dl-clientes').innerHTML=nomes.map(function(n){return'<option value="'+n+'">';}).join('');
+  document.getElementById('dl-clientes-cmd').innerHTML=nomes.map(function(n){return'<option value="'+n+'">';}).join('');
+  var list=DB.atend.filter(function(a){
+    if(fNome&&a.nome.toLowerCase().indexOf(fNome)===-1)return false;
+    if(fMes&&getMesLbl(a.data)!==fMes)return false;
+    if(fTipo&&a.tipo!==fTipo)return false;
+    if(fSt&&a.status!==fSt)return false;
+    return true;
+  });
+  var el=document.getElementById('hist-list');
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum registro encontrado</div>';return;}
+  el.innerHTML=list.map(function(a){
+    return'<div class="hist-item"><div class="hi-left"><div class="hi-nome">'+a.nome+'</div><div class="hi-det">'+fmtD(a.data)+' · <span class="badge b-d">'+a.tipo+'</span>'+(a.forma?' · '+a.forma:'')+(a.obs?' · <span style="color:var(--muted3)">'+a.obs+'</span>':'')+'</div></div>'+
+      '<div class="hi-right"><div class="hi-val '+(a.status==='Pago'?'pago':'fiado')+'">'+fmt(a.valor)+'</div>'+
+      '<div style="display:flex;align-items:center;gap:5px;justify-content:flex-end;margin-top:3px"><span class="badge '+(a.status==='Pago'?'b-pago':'b-fiado')+'">'+a.status+'</span><button class="del" onclick="delAtend('+a.id+')">✕</button></div></div></div>';
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   CSV
+══════════════════════════════════════════ */
+document.getElementById('btn-exp').onclick=function(){
+  if(!DB.atend.length){toast('Nada para exportar!','var(--orange)');return;}
+  var rows=[['Data','Cliente','Serviço','Forma','Valor','Status','Obs']].concat(DB.atend.map(function(a){return[fmtD(a.data),a.nome,a.tipo,a.forma||'',a.valor,a.status,a.obs||''];}));
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+c+'"';}).join(',');}).join('\n');
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='EdPoint_'+today()+'.csv';a.click();URL.revokeObjectURL(url);
+  toast('✅ Exportado!');
+};
+
+/* ══════════════════════════════════════════
+   PDF
+══════════════════════════════════════════ */
+document.getElementById('btn-pdf').onclick=function(){
+  var fNome=(document.getElementById('fil-nome').value||'').toLowerCase().trim();
+  var fMes=document.getElementById('fil-mes').value;
+  var fTipo=document.getElementById('fil-tipo').value;
+  var fSt=document.getElementById('fil-st').value;
+  var list=DB.atend.filter(function(a){
+    if(fNome&&a.nome.toLowerCase().indexOf(fNome)===-1)return false;
+    if(fMes&&getMesLbl(a.data)!==fMes)return false;
+    if(fTipo&&a.tipo!==fTipo)return false;
+    if(fSt&&a.status!==fSt)return false;
+    return true;
+  });
+  if(!list.length){toast('Nenhum dado!','var(--orange)');return;}
+  var total=list.reduce(function(s,a){return s+a.valor;},0);
+  var recebido=list.filter(function(a){return a.status==='Pago';}).reduce(function(s,a){return s+a.valor;},0);
+  var fiadoVal=list.filter(function(a){return a.status==='Fiado';}).reduce(function(s,a){return s+(a.valor-(a.valorPago||0));},0);
+  document.getElementById('pr-total').textContent=fmt(total);
+  document.getElementById('pr-recebido').textContent=fmt(recebido);
+  document.getElementById('pr-fiado').textContent=fmt(fiadoVal);
+  document.getElementById('pr-qt').textContent=list.length;
+  document.getElementById('pr-data-geracao').textContent='Gerado em: '+new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var datas=list.map(function(a){return a.data;}).sort();
+  document.getElementById('pr-periodo').textContent=datas.length?'Período: '+fmtD(datas[0])+' a '+fmtD(datas[datas.length-1]):'';
+  var grupos={};
+  list.filter(function(a){return a.status==='Fiado';}).forEach(function(a){var k=a.nome.toLowerCase();if(!grupos[k])grupos[k]={nome:a.nome,emAberto:0};grupos[k].emAberto+=(a.valor-(a.valorPago||0));});
+  var gKeys=Object.keys(grupos);
+  var pf=document.getElementById('pr-fiados-section');
+  if(gKeys.length){pf.style.display='block';document.getElementById('pr-fiados-list').innerHTML=gKeys.sort(function(a,b){return grupos[b].emAberto-grupos[a].emAberto;}).map(function(k){return'<div class="pr-fiados-item"><span class="pr-fiados-nome">'+grupos[k].nome+'</span><span class="pr-fiados-val">'+fmt(grupos[k].emAberto)+'</span></div>';}).join('');}
+  else pf.style.display='none';
+  document.getElementById('pr-tbody').innerHTML=list.map(function(a,i){return'<tr><td style="color:#999">'+(i+1)+'</td><td>'+fmtD(a.data)+'</td><td style="font-weight:600">'+a.nome+'</td><td>'+a.tipo+'</td><td>'+(a.forma||'—')+'</td><td style="font-weight:700">'+fmt(a.valor)+'</td><td><span class="pr-badge '+(a.status==='Pago'?'pr-pago':'pr-fiado')+'">'+a.status+'</span></td></tr>';}).join('');
+  document.getElementById('pr-footer').textContent='Ed Point · Perfect Hair — '+new Date().toLocaleString('pt-BR')+' · Total: '+fmt(total);
+  window.print();toast('📄 Relatório PDF...');
+};
+
+/* ══════════════════════════════════════════
+   MODAL SUPABASE
+══════════════════════════════════════════ */
+document.getElementById('btn-config').onclick=function(){
+  document.getElementById('cfg-url').value=SB_URL!=='YOUR_SUPABASE_URL'?SB_URL:'';
+  document.getElementById('cfg-key').value=(SB_KEY&&SB_KEY!=='YOUR_SUPABASE_ANON_KEY'&&SB_KEY!=='COLE_MINHA_CHAVE_AQUI')?SB_KEY:'';
+  document.getElementById('modal-config').classList.remove('hidden');
+};
+document.getElementById('cfg-cancelar').onclick=function(){document.getElementById('modal-config').classList.add('hidden');};
+document.getElementById('cfg-salvar').onclick=async function(){
+  var url=document.getElementById('cfg-url').value.trim().replace(/\/$/,'');
+  var key=document.getElementById('cfg-key').value.trim();
+  if(!url||!key){toast('Preencha URL e Key!','var(--red)');return;}
+  SB_URL=url; SB_KEY=key;
+  _sbClient = null;
+  console.log('[EdPoint] Config atualizada — URL:', SB_URL);
+  document.getElementById('modal-config').classList.add('hidden');
+  toast('🔄 Conectando...','var(--blue)');
+  setSb(false,'SYNC');
+  await carregarDados();
+};
+document.getElementById('modal-config').onclick=function(e){if(e.target===this)this.classList.add('hidden');};
+
+/* FILTERS */
+document.getElementById('fil-nome').addEventListener('input',renderHistorico);
+document.getElementById('fil-mes').addEventListener('change',renderHistorico);
+document.getElementById('fil-tipo').addEventListener('change',renderHistorico);
+document.getElementById('fil-st').addEventListener('change',renderHistorico);
+
+/* ══════════════════════════════════════════
+   RENDER ALL
+══════════════════════════════════════════ */
+function renderAll(){
+  renderStats();renderUltimos();
+  renderChartDaily();renderChartMensal();renderChartAcumulado();
+  renderDist();renderFiados();renderComandaHoje();
+  if(currentPage==='historico')renderHistorico();
+  if(currentPage==='servicos')renderCatalogo();
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+document.getElementById('f-data').value=today();
+document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'});
+var pw=document.getElementById('pages-wrap');
+if(window.innerWidth>=700){pw.style.position='static';pw.style.overflow='visible';}
+buildServicosGrid();
+renderVersiculo();
+renderAll(); // renderiza com array vazio enquanto carrega
+
+// Carrega dados do Supabase ao iniciar
+if(isCfg()){
+  setSb(false,'SYNC');
+  carregarDados();
+} else {
+  document.getElementById('db-dot').className='db-dot error';
+  document.getElementById('db-status-txt').style.display='block';
+  document.getElementById('db-status-txt').textContent='CFG';
+  toast('⚙ Configure as credenciais do Supabase para sincronizar!','var(--orange)');
+}
+</script>
+</body>
+</html>
